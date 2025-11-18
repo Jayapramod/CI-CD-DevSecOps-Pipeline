@@ -1,5 +1,5 @@
 ### Multi-stage Dockerfile: build with Maven then copy jar to a minimal runtime image
-FROM maven:3.8.8-openjdk-17 AS builder
+FROM maven:3.8.6-openjdk-17 AS builder
 WORKDIR /workspace
 COPY pom.xml ./
 COPY src ./src
