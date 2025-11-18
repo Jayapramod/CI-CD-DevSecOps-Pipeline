@@ -109,7 +109,8 @@ pipeline {
               def sonarUrl = env.SONAR_HOST_URL ?: 'http://sonarqube:9000'
               // Quick connectivity check to fail fast with a clear message if Sonar is unreachable
               sh "echo 'Checking SonarQube connectivity to ${sonarUrl}'"
-              sh "curl -sSf ${sonarUrl}/api/system/health || (echo 'ERROR: SonarQube not reachable at ${sonarUrl}' >&2; exit 1)"
+              // Use token-based auth for the health check. Sonar tokens can be used as the username with an empty password.
+              sh "curl -sSf -u ${SONAR_LOGIN}: ${sonarUrl}/api/system/health || (echo 'ERROR: SonarQube not reachable or access denied at ${sonarUrl}' >&2; exit 1)"
               // Run analysis using the resolved URL
               sh "mvn -B sonar:sonar -Dsonar.login=${SONAR_LOGIN} -Dsonar.host.url=${sonarUrl}"
             }
