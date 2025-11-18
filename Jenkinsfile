@@ -264,6 +264,27 @@ pipeline {
         }
       }
     }
+
+    // One-off explicit test email (no env var, no recipientProviders, no SCM lookup)
+    stage('Send Test Email (explicit)') {
+      steps {
+        script {
+          // Direct, literal email send as requested by the user.
+          // This will not use environment variables or DevelopersRecipientProvider.
+          emailext(
+            to: 'jayapramodmanikantan@gmail.com',
+            subject: "Pipeline Notification: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: "Stage completed. Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}\nPlease check the build logs for details."
+          )
+        }
+      }
+      post {
+        failure {
+          // If the explicit send fails, also log a message to the console
+          echo 'Explicit test email failed (see Jenkins mailer logs).' 
+        }
+      }
+    }
   }
 
   post {
