@@ -1,0 +1,19 @@
+# Maven
+target/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Maven wrapper / local maven directories
+.mvn/
+
+# Generated jars
+*.jar
