@@ -6,7 +6,8 @@ pipeline {
     DOCKERHUB_CREDS = 'dockerhub-creds'    // usernamePassword
     SONAR_TOKEN = 'sonar-token'           // secret text
     SONAR_SERVER = 'SonarQube'            // Jenkins SonarQube server name (configure in Jenkins Global Tools)
-    // Optional: EMAIL_RECIPIENTS = 'dev-team@example.com'
+    // Optional: set this (job or global) to a comma-separated list of addresses, e.g. 'dev1@example.com,dev2@example.com'
+    EMAIL_RECIPIENTS = ''
   }
 
   stages {
@@ -16,14 +17,30 @@ pipeline {
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: Checkout - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Checkout stage completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}",
+                       subject: "✅ Stage Passed: Checkout - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                       body: "Checkout stage completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Checkout - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                       body: "Checkout stage completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
+                       recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Checkout - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Checkout stage failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}",
+                       subject: "❌ Stage Failed: Checkout - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                       body: "Checkout stage failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Checkout - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                       body: "Checkout stage failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
+                       recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -34,14 +51,22 @@ pipeline {
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Maven build completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Maven build completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Maven build completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Maven build failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Maven build failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Maven build failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -55,14 +80,22 @@ pipeline {
           junit 'target/surefire-reports/*.xml'
         }
         success {
-          emailext subject: "✅ Stage Passed: Unit Tests - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Unit tests completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: Unit Tests - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Unit tests completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Unit Tests - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Unit tests completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Unit Tests - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Unit tests failed. Please check the console output and test reports.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: Unit Tests - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Unit tests failed. Please check the console output and test reports.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Unit Tests - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Unit tests failed. Please check the console output and test reports.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -70,22 +103,37 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         withCredentials([string(credentialsId: env.SONAR_TOKEN, variable: 'SONAR_LOGIN')]) {
-          // Use the SonarQube Jenkins server configuration (SONAR_SERVER) and wait for quality gate in a separate stage
           withSonarQubeEnv(env.SONAR_SERVER) {
-            sh 'mvn -B sonar:sonar -Dsonar.login=${SONAR_LOGIN} -Dsonar.host.url=${SONAR_HOST_URL:-http://sonarqube:9000}'
+            script {
+              // Resolve Sonar URL (from environment or fallback)
+              def sonarUrl = env.SONAR_HOST_URL ?: 'http://sonarqube:9000'
+              // Quick connectivity check to fail fast with a clear message if Sonar is unreachable
+              sh "echo 'Checking SonarQube connectivity to ${sonarUrl}'"
+              sh "curl -sSf ${sonarUrl}/api/system/health || (echo 'ERROR: SonarQube not reachable at ${sonarUrl}' >&2; exit 1)"
+              // Run analysis using the resolved URL
+              sh "mvn -B sonar:sonar -Dsonar.login=${SONAR_LOGIN} -Dsonar.host.url=${sonarUrl}"
+            }
           }
         }
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: SonarQube Analysis - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "SonarQube code analysis completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: SonarQube Analysis - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube code analysis completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: SonarQube Analysis - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube code analysis completed successfully.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: SonarQube Analysis - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "SonarQube analysis failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: SonarQube Analysis - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube analysis failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: SonarQube Analysis - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube analysis failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -104,14 +152,22 @@ pipeline {
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: Quality Gate - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "SonarQube quality gate passed.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: Quality Gate - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube quality gate passed.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Quality Gate - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube quality gate passed.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Quality Gate - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "SonarQube quality gate failed. Code quality issues detected.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: Quality Gate - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube quality gate failed. Code quality issues detected.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Quality Gate - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "SonarQube quality gate failed. Code quality issues detected.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -128,14 +184,22 @@ pipeline {
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: Docker Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Docker image built successfully.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: Docker Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Docker image built successfully.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Docker Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Docker image built successfully.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Docker Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Docker build failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: Docker Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Docker build failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Docker Build - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Docker build failed. Please check the console output.\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -150,14 +214,22 @@ pipeline {
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: Trivy Security Scan - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Trivy security scan completed. No HIGH/CRITICAL vulnerabilities found.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: Trivy Security Scan - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Trivy security scan completed. No HIGH/CRITICAL vulnerabilities found.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Trivy Security Scan - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Trivy security scan completed. No HIGH/CRITICAL vulnerabilities found.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Trivy Security Scan - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Trivy security scan found HIGH or CRITICAL vulnerabilities. Please review the image.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: Trivy Security Scan - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Trivy security scan found HIGH or CRITICAL vulnerabilities. Please review the image.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Trivy Security Scan - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Trivy security scan found HIGH or CRITICAL vulnerabilities. Please review the image.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
@@ -172,14 +244,22 @@ pipeline {
       }
       post {
         success {
-          emailext subject: "✅ Stage Passed: Push to DockerHub - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Docker image pushed to DockerHub successfully.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "✅ Stage Passed: Push to DockerHub - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Docker image pushed to DockerHub successfully.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "✅ Stage Passed: Push to DockerHub - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Docker image pushed to DockerHub successfully.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
         failure {
-          emailext subject: "❌ Stage Failed: Push to DockerHub - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "Failed to push Docker image to DockerHub. Please check credentials and console output.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}",
-                   recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          script {
+            if (env.EMAIL_RECIPIENTS?.trim()) {
+              emailext to: "${env.EMAIL_RECIPIENTS}", subject: "❌ Stage Failed: Push to DockerHub - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Failed to push Docker image to DockerHub. Please check credentials and console output.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
+            } else {
+              emailext subject: "❌ Stage Failed: Push to DockerHub - ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Failed to push Docker image to DockerHub. Please check credentials and console output.\n\nImage: ${env.IMAGE_NAME}\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}", recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            }
+          }
         }
       }
     }
