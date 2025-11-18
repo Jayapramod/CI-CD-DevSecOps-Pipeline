@@ -143,7 +143,7 @@ pipeline {
     stage('Quality Gate') {
       steps {
         // waitForQualityGate requires the SonarQube Jenkins plugin. It will return a map with 'status'.
-        timeout(time: 2, unit: 'MINUTES') {
+        timeout(time: 10, unit: 'MINUTES') {
           script {
             def qg = waitForQualityGate()
             if (qg.status != 'OK') {
