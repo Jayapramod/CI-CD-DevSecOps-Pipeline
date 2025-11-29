@@ -24,28 +24,6 @@ This project is a single-repo pipeline (application code + `Jenkinsfile` in the 
 
 ## Architecture diagram
 
-Below is a simple Mermaid diagram that visualizes the pipeline flow. If you prefer an image, add `images/architecture.png` to the repository and reference it where noted.
-
-```mermaid
-flowchart LR
-  A[GitHub Repository] -->|Webhook / Manual| B[Jenkins Multibranch Pipeline]
-	B --> C{Stages}
-	C --> C1[Checkout]
-	C --> C2[Build - mvn package]
-	C --> C3[Unit Tests]
-	C --> C4[SonarQube Analysis]
-	C --> C5[Quality Gate]
-	C --> C6[Docker Build]
-	C --> C7[Trivy Scan]
-	C --> C8[Push to DockerHub]
-  C8 --> D[DockerHub Registry]
-  C7 --> E[Security Scan Reports]
-  C4 --> F[SonarQube Server]
-  B --> G[Email Notifications (SMTP)]
-```
-
-If you want a PNG/SVG instead of the Mermaid block, place your diagram at `images/architecture.png`. The README shows the Mermaid by default which renders on platforms that support it (like GitHub). To display the PNG add this Markdown where you want it:
-
 ![Architecture diagram](images/architecture.png)
 
 ## Prerequisites
