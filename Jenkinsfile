@@ -7,7 +7,8 @@ pipeline {
     SONAR_TOKEN = 'sonar-token'           // secret text
     SONAR_SERVER = 'SonarQube'            // Jenkins SonarQube server name (configure in Jenkins Global Tools)
     // Optional: set this (job or global) to a comma-separated list of addresses, e.g. 'dev1@example.com,dev2@example.com'
-    EMAIL_RECIPIENTS = ''
+    DOCKERHUB_NAMESPACE = 'jayapramod'
+    EMAIL_RECIPIENTS = 'jayapramodmanikantan@gmail.com'
 
   }
 
