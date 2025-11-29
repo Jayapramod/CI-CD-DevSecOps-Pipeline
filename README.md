@@ -29,15 +29,15 @@ Below is a simple Mermaid diagram that visualizes the pipeline flow. If you pref
 ```mermaid
 flowchart LR
   A[GitHub Repository] -->|Webhook / Manual| B[Jenkins Multibranch Pipeline]
-  B --> C{Stages}
-  C --> C1[Checkout]
-  C --> C2[Build (mvn package)]
-  C --> C3[Unit Tests]
-  C --> C4[SonarQube Analysis]
-  C --> C5[Quality Gate]
-  C --> C6[Docker Build]
-  C --> C7[Trivy Scan]
-  C --> C8[Push to DockerHub]
+	B --> C{Stages}
+	C --> C1[Checkout]
+	C --> C2[Build - mvn package]
+	C --> C3[Unit Tests]
+	C --> C4[SonarQube Analysis]
+	C --> C5[Quality Gate]
+	C --> C6[Docker Build]
+	C --> C7[Trivy Scan]
+	C --> C8[Push to DockerHub]
   C8 --> D[DockerHub Registry]
   C7 --> E[Security Scan Reports]
   C4 --> F[SonarQube Server]
@@ -123,25 +123,13 @@ The `Jenkinsfile` contains these stages; below each stage is explained briefly, 
 
 ## DockerHub and image management (screenshot)
 
-After a successful push, your image appears at `https://hub.docker.com/r/<your-namespace>/cicd-pipeline`. To add a screenshot of DockerHub to this README:
-
-1. Take a screenshot of your DockerHub repository page showing the pushed image/tag.
-2. Save it as `images/dockerhub.png` in the repo root.
-3. Add the following line where you want the screenshot to appear:
-
-```markdown
 ![DockerHub screenshot](images/dockerhub.png)
-```
 
-If you'd like, I can add a placeholder `images/README.md` file to remind contributors to add those screenshots.
 
 ## SMTP / Email setup (screenshot)
 
-To show an example of Jenkins SMTP config in the README, add a screenshot of the Extended E-mail Notification config in Jenkins as `images/smtp.png` and include it with:
-
-```markdown
 ![SMTP configuration screenshot](images/smtp.png)
-```
+
 
 ### Recommended SMTP settings (Gmail example)
 
