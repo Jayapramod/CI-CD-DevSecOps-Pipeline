@@ -118,35 +118,6 @@ The `Jenkinsfile` contains these stages; below each stage is explained briefly, 
 - Password: use an app password (do not use main account password)
 - Use TLS: yes
 
-## Run locally (quick checks)
-
-1. Quick environment health check:
-
-```bash
-./scripts/check-env.sh
-```
-
-2. Build and test locally:
-
-```bash
-mvn -B clean package
-mvn test
-```
-
-3. Run locally:
-
-```bash
-mvn spring-boot:run
-# open http://localhost:8080/hello
-```
-
-4. Build and run Docker image locally:
-
-```bash
-docker build -t myname/cicd-pipeline:local-1 .
-docker run -p 8080:8080 myname/cicd-pipeline:local-1
-```
-
 ## Troubleshooting
 
 - Sonar: if you see errors about `waitForQualityGate` or `withSonarQubeEnv`, ensure the SonarQube Scanner plugin is installed and the Sonar server named `SonarQube` is configured in Jenkins.

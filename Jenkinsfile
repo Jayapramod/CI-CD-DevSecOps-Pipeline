@@ -2,11 +2,9 @@ pipeline {
   agent any
 
   environment {
-    // Credential IDs you should create in Jenkins
-    DOCKERHUB_CREDS = 'dockerhub-creds'    // usernamePassword
-    SONAR_TOKEN = 'sonar-token'           // secret text
-    SONAR_SERVER = 'SonarQube'            // Jenkins SonarQube server name (configure in Jenkins Global Tools)
-    // Optional: set this (job or global) to a comma-separated list of addresses, e.g. 'dev1@example.com,dev2@example.com'
+    DOCKERHUB_CREDS = 'dockerhub-creds'
+    SONAR_TOKEN = 'sonar-token'
+    SONAR_SERVER = 'SonarQube'
     DOCKERHUB_NAMESPACE = 'jayapramod'
     EMAIL_RECIPIENTS = 'jayapramodmanikantan@gmail.com'
 
@@ -107,13 +105,9 @@ pipeline {
         withCredentials([string(credentialsId: env.SONAR_TOKEN, variable: 'SONAR_LOGIN')]) {
           withSonarQubeEnv(env.SONAR_SERVER) {
             script {
-              // Resolve Sonar URL (from environment or fallback)
               def sonarUrl = env.SONAR_HOST_URL ?: 'http://sonarqube:9000'
-              // Quick connectivity check to fail fast with a clear message if Sonar is unreachable
               sh "echo 'Checking SonarQube connectivity to ${sonarUrl}'"
-              // Use token-based auth for the health check. Sonar tokens can be used as the username with an empty password.
               sh "curl -sSf -u ${SONAR_LOGIN}: ${sonarUrl}/api/system/health || (echo 'ERROR: SonarQube not reachable or access denied at ${sonarUrl}' >&2; exit 1)"
-              // Run analysis using the resolved URL
               sh "mvn -B sonar:sonar -Dsonar.login=${SONAR_LOGIN} -Dsonar.host.url=${sonarUrl}"
             }
           }
@@ -143,7 +137,6 @@ pipeline {
 
     stage('Quality Gate') {
       steps {
-        // waitForQualityGate requires the SonarQube Jenkins plugin. It will return a map with 'status'.
         timeout(time: 10, unit: 'MINUTES') {
           script {
             def qg = waitForQualityGate()
@@ -210,8 +203,6 @@ pipeline {
     stage('Trivy Scan') {
       steps {
         script {
-          // Run Trivy and FAIL the build if HIGH or CRITICAL vulnerabilities are found.
-          // Requires Docker on the agent and network access to pull the Trivy image.
           sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL ${env.IMAGE_NAME}"
         }
       }
@@ -267,12 +258,9 @@ pipeline {
       }
     }
 
-    // One-off explicit test email (no env var, no recipientProviders, no SCM lookup)
     stage('Send Test Email (explicit)') {
       steps {
         script {
-          // Direct, literal email send as requested by the user.
-          // This will not use environment variables or DevelopersRecipientProvider.
           emailext(
             to: 'jayapramodmanikantan@gmail.com',
             subject: "Pipeline Notification: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
@@ -282,7 +270,6 @@ pipeline {
       }
       post {
         failure {
-          // If the explicit send fails, also log a message to the console
           echo 'Explicit test email failed (see Jenkins mailer logs).' 
         }
       }
